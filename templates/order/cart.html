@@ -1,0 +1,103 @@
+{% extends 'core/base.html' %} {% load static %} {% load cart_items %} <br />
+{% block content %}
+
+<section class="page-header">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="content">
+          <h1 class="page-name">Cart</h1>
+          <ol class="breadcrumb">
+            <li><a href="/">Home</a></li>
+            <li class="active">cart</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="page-wrapper">
+  <div class="cart shopping">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+          <div class="block">
+            <div class="product-list">
+              {% if carts %}
+              <form method="post">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th class="">Item Name</th>
+                      <th class="">Quentity</th>
+                      <th class="">Item Price</th>
+                      <th class="">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for cart in carts %}
+                    <tr class="">
+                      <td class="">
+                        <div class="product-info">
+                          <img
+                            width="80"
+                            src="{{cart.item.image.url}}"
+                            alt=""
+                          />
+                          <a href="#!">{{cart.item.name}}</a>
+                        </div>
+                      </td>
+                      <td class="">
+                        <div class="q-group">
+                          <p class="q-btn">
+                            <a
+                              id="decrement"
+                              href="{% url 'decrement' cart.item.id %}"
+                              >-</a
+                            >
+                          </p>
+                          <p id="quentity">{{cart.quentity}}</p>
+                          <p class="q-btn">
+                            <a
+                              id="increment"
+                              itemid="{{cart.item.id}}"
+                              href="{% url 'increment' cart.item.id %}"
+                              >+</a
+                            >
+                          </p>
+                        </div>
+                      </td>
+                      <td class="">${{cart.get_total}}</td>
+                      <td class="">
+                        <a
+                          class="product-remove"
+                          href="{% url 'remove' cart.item.id %}"
+                          >Remove</a
+                        >
+                      </td>
+                    </tr>
+
+                    {% endfor %}
+                  </tbody>
+                </table>
+                <a href="{% url 'checkout' %}" class="btn btn-main pull-right"
+                  >Checkout</a
+                >
+              </form>
+              {% else %}
+              <div class="mx-auto text-center">
+                <h2>Cart Empty</h2>
+                <br />
+                <a href="/">add item to cart</a>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}

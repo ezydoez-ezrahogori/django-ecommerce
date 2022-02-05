@@ -1,0 +1,237 @@
+{% extends 'core/base.html' %} {% load static %} {% load cart_items %} <br />
+{% block content %} {% if messages %} {% for message in messages %}
+<p class="msg">{{message}}</p>
+{% endfor %} {% endif %}
+
+<section class="page-header">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="content">
+          <h1 class="page-name">Checkout</h1>
+          <ol class="breadcrumb">
+            <li><a href="/">Home</a></li>
+            <li class="active">checkout</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="page-wrapper">
+  <div class="checkout shopping">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-8">
+          <div class="block billing-details">
+            <h4 class="widget-title">Billing Details</h4>
+            <form class="checkout-form" method="post" action="">
+              {% csrf_token %}
+              <div class="form-group">
+                <label for="full_name">Full Name</label>
+                {{form.full_name}}
+              </div>
+              <div class="form-group">
+                <label for="user_address">Address</label>
+                {{form.address}}
+              </div>
+              <div class="form-group">
+                <label for="user_address">Mobile</label>
+                {{form.mobile}}
+              </div>
+              <div class="checkout-country-code clearfix">
+                <div class="form-group">
+                  <label for="user_post_code">Zip Code</label>
+                  {{form.zip_code}}
+                </div>
+                <div class="form-group">
+                  <label for="user_city">City</label>
+                  {{form.city}}
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="user_country">Country</label>
+                {{form.country}}
+              </div>
+              <h4 class="widget-title">Payment Method</h4>
+              {% if pay_meth %}
+              <div id="paypal-button-container"></div>
+              {% else %}
+
+              <div class="form-group">{{pay_form.payment_method}}</div>
+              {% endif %}
+              <input
+                class="btn btn-main mt-20"
+                type="submit"
+                value="Place Order"
+              />
+            </form>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="product-checkout-details">
+            <div class="block">
+              <h4 class="widget-title">Order Summary</h4>
+              {% if carts %}
+              <div>
+                {% for cart in carts %}
+                <div class="media product-card">
+                  <a class="pull-left" href="product-single.html">
+                    <img
+                      class="media-object"
+                      src="{{cart.item.image.url}}"
+                      alt="Image"
+                    />
+                  </a>
+                  <div class="media-body">
+                    <h4 class="media-heading">
+                      <a href="product-single.html">{{cart.item.name}}</a>
+                    </h4>
+                    <p class="price">
+                      {{cart.quentity}} x ${{cart.item.price}}
+                    </p>
+                    <a href="{% url 'remove' cart.item.id %}"
+                      ><span class="remove">Remove</span></a
+                    >
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+              {% else %}
+              <a href="">Nothing to checkout</a>
+              {% endif %}
+              <div class="discount-code">
+                <p>
+                  Have a discount ?
+                  <a data-toggle="modal" data-target="#coupon-modal" href="#!"
+                    >enter it here</a
+                  >
+                </p>
+              </div>
+              <ul class="summary-prices">
+                <li>
+                  <span>Subtotal:</span>
+                  {% if request.user|order_price %}
+                  <span class="price">${{request.user|order_price}}</span>
+                  {% else %} <span class="price">$0</span> {% endif %}
+                </li>
+                <li>
+                  <span>Shipping:</span>
+                  <span>Free</span>
+                </li>
+              </ul>
+              <div class="summary-total">
+                <span>Total</span>
+                <span>
+                  {% if total_after_discount %}
+                  <!---->
+                  {% if request.user|order_price %}
+                  <!---->
+                  ${{total_after_discount}} {% else %} <span>$0</span>
+                  <!---->
+                  {% endif %}
+                  <!---->
+                  {% else %} {% if request.user|order_price %}
+                  ${{request.user|order_price}} {% else %} <span>$0</span>
+                  <!---->{% endif %}
+                  <!---->{% endif %}
+                </span>
+              </div>
+              <div class="verified-icon">
+                <img src="{% static 'images/shop/verified.png' %}" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="coupon-modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <input
+              class="form-control"
+              type="text"
+              name="coupon_code"
+              placeholder="Enter Coupon Code"
+            />
+          </div>
+          <button type="submit" class="btn btn-main">Apply Coupon</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock content %} {% block paypal %}
+
+<script src="https://www.paypal.com/sdk/js?client-id={{paypal_client}}"></script>
+
+<script>
+
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+              const cookie = cookies[i].trim();
+              // Does this cookie string begin with the name we want?
+              if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                  break;
+              }
+          }
+      }
+      return cookieValue;
+  }
+  var csrftoken = getCookie('csrftoken');
+  var url = "{% url 'paypal_payment' %}"
+
+
+
+    paypal
+      .Buttons({
+        createOrder: function (data, actions) {
+          // This function sets up the details of the transaction, including the amount and line item details.
+          return actions.order.create({
+            purchase_units: [
+              {
+                amount: {
+                  value: {{order_totals}},
+                },
+              },
+            ],
+          });
+        },
+        onApprove: function (data, actions) {
+          // This function captures the funds from the transaction.
+          return actions.order.capture().then(function (details) {
+            sendData();
+              function sendData() {
+                fetch(url, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                  },
+                  body: JSON.stringify({
+                    'order_id': details.id,
+                    'payment_id': details.payer.payer_id,
+                    'status': details.status
+                  })
+                })
+              }
+              window.location.href = "{% url 'confirmation' %}"
+          });
+        },
+      })
+      .render("#paypal-button-container");
+    //This function displays payment buttons on your web page.
+</script>
+
+{% endblock paypal %}

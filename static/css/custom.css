@@ -1,0 +1,31 @@
+.q-group {
+  display: flex;
+  margin-left: -30px;
+}
+.q-btn {
+  border: 1px solid black;
+  border-radius: 3px;
+  padding: 0 5px;
+  margin: 0 10px;
+  cursor: pointer;
+  width: 35px;
+  height: 25px;
+  text-align: center;
+  align-items: center;
+  font-weight: bold;
+}
+
+.msg {
+  color: red;
+  text-align: center;
+}
+.team-img {
+  width: 230px;
+  height: 230px;
+}
+.about-img {
+  height: 400px;
+}
+.header-img {
+  height: 220px;
+}

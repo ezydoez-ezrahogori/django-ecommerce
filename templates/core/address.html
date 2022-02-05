@@ -1,0 +1,68 @@
+{% extends 'core/base.html' %} {% load static %} {% block content %}
+<section class="page-header">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="content">
+          <h1 class="page-name">Dashboard</h1>
+          <ol class="breadcrumb">
+            <li><a href="index.html">Home</a></li>
+            <li class="active">my account</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="user-dashboard page-wrapper">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <ul class="list-inline dashboard-menu text-center">
+          <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+          <li><a href="{% url 'order' %}">Orders</a></li>
+          <li><a class="active" href="{% url 'address' %}">Address</a></li>
+          <li><a href="{% url 'profile-details' %}">Profile Details</a></li>
+        </ul>
+        <div class="dashboard-wrapper user-dashboard">
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Address</th>
+                  <th>Country</th>
+                  <th class="col-md-2 col-sm-3">Phone</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>{{address.full_name}}</td>
+                  <td>
+                    {{address.address}}, {{address.city}}-{{address.zip_code}}
+                  </td>
+                  <td>{{address.country}}</td>
+                  <td>+88{{address.mobile}}</td>
+                  {% comment %}
+                  <td>
+                    <div class="btn-group" role="group">
+                      <button type="button" class="btn btn-default">
+                        <i class="tf-pencil2" aria-hidden="true"></i>
+                      </button>
+                      <button type="button" class="btn btn-default">
+                        <i class="tf-ion-close" aria-hidden="true"></i>
+                      </button>
+                    </div>
+                  </td>
+                  {% endcomment %}
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock content %}
